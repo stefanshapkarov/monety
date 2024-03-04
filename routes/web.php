@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\TransactionController;
+use App\Models\Account;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,6 +32,11 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
+        return Inertia::render('Dashboard', [
+            // Passing the account object for testing purposes
+            'currentAccount' => auth()->user()->account,
+        ]);
     })->name('dashboard');
+
+    Route::post('/transfer-funds', [TransactionController::class, 'store'])->name('transfer-funds');
 });

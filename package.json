@@ -19,6 +19,10 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
+<<<<<<< Updated upstream
         "v-credit-card": "^1.2.4"
+=======
+        "@inertiajs/inertia-vue3": "^0.6.0"
+>>>>>>> Stashed changes
     }
 }
