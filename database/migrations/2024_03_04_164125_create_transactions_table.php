@@ -17,6 +17,10 @@ return new class extends Migration {
             $table->double('amount');
             $table->timestamps();
 
+            // TODO implement status of transaction and type of transaction
+            //$table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            //$table->enum('type', ['transfer', 'withdrawal', 'deposit', 'payment']);
+
             $table->foreign('from_account_id')
                 ->references('id')->on('accounts');
             $table->foreign('to_account_id')

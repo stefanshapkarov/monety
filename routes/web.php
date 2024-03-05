@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TransactionController;
 use App\Models\Account;
+use App\Models\Transaction;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,8 +36,14 @@ Route::middleware([
         return Inertia::render('Dashboard', [
             // Passing the account object for testing purposes
             'currentAccount' => auth()->user()->account,
+            'sentTransactions' => Transaction::where('from_account_id', auth()->user()->account->id)->get(),
+            'receivedTransactions' => Transaction::where('to_account_id', auth()->user()->account->id)->get()
         ]);
     })->name('dashboard');
 
     Route::post('/transfer-funds', [TransactionController::class, 'store'])->name('transfer-funds');
+
+    Route::get('/withdraw', fn() => Inertia::render('Withdraw', [
+//        'currentAccount' => auth()->user()->account,
+    ]));
 });

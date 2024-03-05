@@ -43,9 +43,11 @@ class TransactionController extends Controller
                 ]);
             });
         } catch (Throwable $e) {
+            // TODO return the transaction with status failed
             return redirect('/dashboard')->with(['error' => 'There was a problem with the transaction, please try again later.']);
         }
 
+        // TODO return the transaction with message successful, status pending for other user
         return redirect('/dashboard')->with(['success' => 'The transaction was successful.']);
     }
 }
