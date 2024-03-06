@@ -1,6 +1,5 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Components/Welcome.vue';
 </script>
 
 <template>
@@ -65,6 +64,7 @@ import Welcome from '@/Components/Welcome.vue';
                         </section>
                         <a class="h-8 overflow-hidden text-md font-medium transition rounded-full py-1 px-3 text-emerald-400 bg-emerald-400/10 ring-1 ring-inset ring-emerald-400/20 hover:bg-emerald-400/10 hover:text-emerald-300 hover:ring-emerald-300"
                            href="/withdraw">Withdraw Money</a>
+                        <h1>Converted 200 USD to {{ convertedCurrency }} MKD.</h1>
                     </div>
                 </div>
             </div>
@@ -89,7 +89,8 @@ export default {
     props: {
         currentAccount: Object,
         sentTransactions: Array,
-        receivedTransactions: Array
+        receivedTransactions: Array,
+        convertedCurrency: null
     }
 }
 </script>

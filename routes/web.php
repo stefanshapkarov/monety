@@ -3,6 +3,7 @@
 use App\Http\Controllers\TransactionController;
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Services\CurrencyConverterService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,11 +34,14 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
+        $currencyConverter = new CurrencyConverterService();
+
         return Inertia::render('Dashboard', [
             // Passing the account object for testing purposes
             'currentAccount' => auth()->user()->account,
             'sentTransactions' => Transaction::where('from_account_id', auth()->user()->account->id)->get(),
-            'receivedTransactions' => Transaction::where('to_account_id', auth()->user()->account->id)->get()
+            'receivedTransactions' => Transaction::where('to_account_id', auth()->user()->account->id)->get(),
+            'convertedCurrency' => $currencyConverter->convert(200, 'USD', 'MKD')
         ]);
     })->name('dashboard');
 
