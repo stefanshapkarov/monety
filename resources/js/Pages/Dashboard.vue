@@ -37,7 +37,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                             </section>
                         </div>
                         <section>
-                            <h2 class="font-bold text-2xl text-emerald-400">Sent Transactions: </h2>
+                            <h2 class="font-bold text-2xl text-emerald-400">Sent Transactioons: </h2>
 
                             <ul>
                                 <li v-for="(transaction, index) in sentTransactions" :key="index">
