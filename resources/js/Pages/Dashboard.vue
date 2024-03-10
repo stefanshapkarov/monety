@@ -45,6 +45,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                                         <p>Transaction senderId: {{ transaction.from_account_id }}</p>
                                         <p>Transaction receiverId: {{ transaction.to_account_id }}</p>
                                         <p>Amount: {{ transaction.amount }}</p>
+                                        <p>Status: {{ transaction.status }}</p>
                                     </div>
                                 </li>
                             </ul>
@@ -58,6 +59,16 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                                         <p>Transaction senderId: {{ transaction.from_account_id }}</p>
                                         <p>Transaction receiverId: {{ transaction.to_account_id }}</p>
                                         <p>Amount: {{ transaction.amount }}</p>
+                                        <p>Status: {{ transaction.status }}</p>
+                                        <!-- Testing refund functionality -->
+                                        <form @submit.prevent="refund(transaction.id)">
+                                            <input type="hidden" v-model="transaction.id" name="transactionId">
+                                            <button type="submit">Refund</button>
+                                        </form>
+                                        <form @submit.prevent="complete(transaction.id)">
+                                            <input type="hidden" v-model="transaction.id" name="transactionId">
+                                            <button type="submit">Accept</button>
+                                        </form>
                                     </div>
                                 </li>
                             </ul>
@@ -91,6 +102,14 @@ export default {
         sentTransactions: Array,
         receivedTransactions: Array,
         convertedCurrency: null
+    },
+    methods: {
+        "refund": function refund(transactionId) {
+            this.$inertia.post('/refund-transaction', { transactionId: transactionId });
+        },
+        "complete": function complete(transactionId) {
+            this.$inertia.post('/complete-transaction', { transactionId: transactionId });
+        }
     }
 }
 </script>

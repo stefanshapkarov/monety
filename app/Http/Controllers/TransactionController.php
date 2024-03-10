@@ -5,12 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class TransactionController extends Controller
 {
+    protected $transactionService;
+
+    public function __construct(TransactionService $transactionService)
+    {
+        $this->transactionService = $transactionService;
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -22,32 +30,50 @@ class TransactionController extends Controller
         $toAccountEmail = $request->email;
 
         try {
-            DB::transaction(function () use ($amount, $toAccountEmail) {
-                $fromAccount = auth()->user()->account;
-                $toUser = User::where('email', $toAccountEmail)->firstOrFail();
-                $toAccount = Account::where('user_id', $toUser->id)->firstOrFail();
-
-                if ($fromAccount->balance < $amount) {
-                    return redirect('/dashboard')->with(['error' => "Not enough balance to make transaction."]);
-                }
-
-                $fromAccount->balance -= $amount;
-                $toAccount->balance += $amount;
-                $fromAccount->save();
-                $toAccount->save();
-
-                Transaction::create([
-                    'from_account_id' => $fromAccount->id,
-                    'to_account_id' => $toAccount->id,
-                    'amount' => $amount
-                ]);
-            });
+            $this->transactionService->performTransaction($amount, $toAccountEmail);
         } catch (Throwable $e) {
-            // TODO return the transaction with status failed
             return redirect('/dashboard')->with(['error' => 'There was a problem with the transaction, please try again later.']);
         }
 
-        // TODO return the transaction with message successful, status pending for other user
         return redirect('/dashboard')->with(['success' => 'The transaction was successful.']);
+    }
+
+    // Will need change to take transaction directly as parameter
+    public function complete(Request $request)
+    {
+        $transaction = Transaction::findOrFail($request->transactionId);
+        try {
+            if ($transaction->status != 'pending') {
+                throw new \Exception('Transaction is not pending.');
+            }
+            $this->transactionService->sendFunds($transaction);
+        } catch (Throwable $e) {
+            return redirect('/dashboard')->with(['error' => 'There was a problem completing the transaction!']);
+        }
+        return null;
+    }
+
+    // Will need change to take transaction directly as parameter
+    public function refund(Request $request)
+    {
+        $transaction = Transaction::findOrFail($request->transactionId);
+        $user = auth()->user();
+        if ($transaction->to_account_id != $user->account->id) {
+            return redirect('/dashboard')->with(['error' => 'Unauthorized refund attempt.']);
+        }
+        if ($transaction->status != 'completed') {
+            if ($transaction->status == 'pending') {
+                $this->transactionService->refundFunds($transaction, true);
+            } else {
+                return redirect('/dashboard')->with(['error' => 'This transaction is not eligible for a refund.']);
+            }
+        } else {
+            try {
+                $this->transactionService->refundFunds($transaction);
+            } catch (Throwable $e) {
+                return redirect('/dashboard')->with(['error' => 'There was a problem processing your refund. Please try again later.']);
+            }
+        }
+        return redirect('/dashboard')->with(['success' => 'The refund has been processed successfully.']);
     }
 }

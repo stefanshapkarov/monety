@@ -46,6 +46,8 @@ Route::middleware([
     })->name('dashboard');
 
     Route::post('/transfer-funds', [TransactionController::class, 'store'])->name('transfer-funds');
+    Route::post('/refund-transaction', [TransactionController::class, 'refund'])->name('refund-transaction');
+    Route::post('/complete-transaction', [TransactionController::class, 'complete'])->name('complete-transaction');
 
     Route::get('/withdraw', fn() => Inertia::render('Withdraw', [
 //        'currentAccount' => auth()->user()->account,
