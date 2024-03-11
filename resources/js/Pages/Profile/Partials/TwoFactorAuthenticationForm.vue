@@ -123,7 +123,7 @@ const disableTwoFactorAuthentication = () => {
                 Finish enabling two factor authentication.
             </h3>
 
-            <h3 v-else class="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h3 v-else class="text-lg font-medium text-gray-900 dark:text-emerald-400">
                 You have not enabled two factor authentication.
             </h3>
 
