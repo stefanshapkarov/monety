@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "@inertiajs/inertia-vue3": "^0.6.0",
+        "oh-vue-icons": "^1.0.0-rc3",
         "v-credit-card": "^1.2.4",
         "vue-paycard": "^0.7.0"
     }

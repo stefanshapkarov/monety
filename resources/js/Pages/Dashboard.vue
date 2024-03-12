@@ -1,5 +1,8 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import TransactionsSection from "@/Pages/DashboardPartials/TransactionsSection.vue";
+import BalanceSection from "@/Components/BalanceSection.vue";
+import SideBarButton from "@/Components/SideBarButton.vue";
 </script>
 
 <template>
@@ -78,6 +81,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                         <h1>Converted 20000 MKD to {{ convertedCurrency }} JPY.</h1>
                     </div>
                 </div>
+                    <BalanceSection />
+                    <SideBarButton />
+                    <TransactionsSection />
+
             </div>
         </div>
     </AppLayout>

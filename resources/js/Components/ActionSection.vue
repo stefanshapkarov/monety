@@ -4,7 +4,7 @@ import SectionTitle from './SectionTitle.vue';
 
 <template>
     <div class="md:grid md:grid-cols-1 md:gap-6">
-        <SectionTitle>
+        <SectionTitle :isDelete="isDelete">
             <template #title>
                 <slot name="title" />
             </template>
@@ -20,3 +20,14 @@ import SectionTitle from './SectionTitle.vue';
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    props: {
+        isDelete: {
+            type: Boolean,
+            default: false
+        }
+    }
+}
+</script>

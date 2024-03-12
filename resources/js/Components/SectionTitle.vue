@@ -1,7 +1,8 @@
 <template>
     <div class="md:col-span-2 flex justify-between">
         <div class="px-4 sm:px-0">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-emerald-400">
+            <!-- Apply text-red-500 class if isDelete is true -->
+            <h3 :class="{ 'text-red-500': isDelete }" class="text-lg font-medium text-emerald-400">
                 <slot name="title" />
             </h3>
 
@@ -15,3 +16,14 @@
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    props: {
+        isDelete: {
+            type: Boolean,
+            default: false
+        }
+    }
+}
+</script>

@@ -38,7 +38,7 @@ const closeModal = () => {
 </script>
 
 <template>
-    <ActionSection>
+    <ActionSection :isDelete="isDelete">
         <template #title>
             Delete Account
         </template>
@@ -48,7 +48,7 @@ const closeModal = () => {
         </template>
 
         <template #content>
-            <h3 class="text-lg font-medium text-gray-900 dark:text-emerald-400 mb-3">
+            <h3 class="text-lg font-medium text-red-500 mb-3">
                 Your account and your data will be permanently deleted.
             </h3>
             <div class="max-w-xl text-sm text-gray-600 dark:text-gray-400">
@@ -103,3 +103,13 @@ const closeModal = () => {
         </template>
     </ActionSection>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            isDelete: true
+        }
+    }
+}
+</script>
