@@ -1,5 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
+import 'alpinejs';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
@@ -7,9 +8,9 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { OhVueIcon, addIcons } from "oh-vue-icons";
 
-import { BiArrowDownCircle, BiArrowUpCircle, LaMinusCircleSolid, BiArrowDownLeftSquareFill, BiArrowUpRightSquareFill, FaArrowUp, FaArrowLeft  } from "oh-vue-icons/icons";
+import { BiArrowDownCircle, BiArrowUpCircle, LaMinusCircleSolid, BiArrowDownLeftSquareFill, BiArrowUpRightSquareFill, FaArrowUp, FaArrowLeft, HiCheck, BiXLg    } from "oh-vue-icons/icons";
 
-addIcons(BiArrowDownCircle, BiArrowUpCircle, LaMinusCircleSolid, BiArrowDownLeftSquareFill, BiArrowUpRightSquareFill, FaArrowUp, FaArrowLeft  );
+addIcons(BiArrowDownCircle, BiArrowUpCircle, LaMinusCircleSolid, BiArrowDownLeftSquareFill, BiArrowUpRightSquareFill, FaArrowUp, FaArrowLeft, HiCheck, BiXLg    );
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

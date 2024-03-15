@@ -4,8 +4,8 @@ import TransactionListItem from "@/Components/TransactionListItem.vue";
 </script>
 
 <template>
-    <div class="mx-auto max-w-screen-lg px-4 py-8 sm:px-8">
-        <div class="overflow-y-hidden rounded-lg border">
+    <div class="w-full mt-14 shadow-2xl">
+        <div class="overflow-y-hidden rounded-xl border">
             <div class="overflow-x-auto">
                 <table class="w-full table-fixed">
                     <thead>
