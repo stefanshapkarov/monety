@@ -4,6 +4,8 @@ import TransactionsSection from "@/Pages/DashboardPartials/TransactionsSection.v
 import BalanceSection from "@/Components/BalanceSection.vue";
 import PendingTransactions from "@/Components/PendingTransactions.vue";
 import SideBar from "@/Components/SideBar.vue";
+import SendMoneyButton from "@/Components/SendMoneyButton.vue";
+import WithdrawMoneyButton from "@/Components/WithdrawMoneyButton.vue";
 </script>
 
 <template>
@@ -85,8 +87,12 @@ import SideBar from "@/Components/SideBar.vue";
                 <div class="flex justify-between mt-3">
                     <BalanceSection />
                     <PendingTransactions />
-                    <SideBar :toggle="toggle" :sidebars="sidebars"/>
+                    <div class="w-80">
+                        <SendMoneyButton @click="showSendMoney"/>
+                        <WithdrawMoneyButton @click="showWithdraw"/>
+                    </div>
                 </div>
+                <SideBar v-if="sidebarActive" :sendMoneyActive="sendMoneyActive" :withdrawActive="withdrawActive" @close="closeSidebar" />
                 <TransactionsSection  />
             </div>
         </div>
@@ -95,21 +101,10 @@ import SideBar from "@/Components/SideBar.vue";
 
 <script>
 import {useForm} from '@inertiajs/vue3';
-import { ref } from 'vue';
 
 const form = useForm({
     amount: '',
     email: '',
-});
-
-
-const toggle = (sidebar) => {
-    sidebars[sidebar] = !sidebars[sidebar];
-}
-
-const sidebars = ref({
-    sendMoney: false,
-    withdrawMoney: false
 });
 
 function submit(e) {
@@ -118,6 +113,13 @@ function submit(e) {
 }
 
 export default {
+    data() {
+        return {
+            sidebarActive: false,
+            sendMoneyActive: false,
+            withdrawActive: false
+        }
+    },
     props: {
         currentAccount: Object,
         sentTransactions: Array,
@@ -130,6 +132,21 @@ export default {
         },
         "complete": function complete(transactionId) {
             this.$inertia.post('/complete-transaction', { transactionId: transactionId });
+        },
+        showSendMoney() {
+            this.sidebarActive = true;
+            this.sendMoneyActive = true;
+            this.withdrawActive = false;
+        },
+        showWithdraw() {
+            this.sidebarActive = true;
+            this.sendMoneyActive = false;
+            this.withdrawActive = true;
+        },
+        closeSidebar() {
+            this.sendMoneyActive = false;
+            this.withdrawActive = false;
+            this.sidebarActive = false;
         }
     }
 }

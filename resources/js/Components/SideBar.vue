@@ -1,64 +1,75 @@
 <template>
-    <div class="w-80">
-        <!-- Send Money button -->
-        <button @click.prevent="toggle('sendMoney')" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white text-xl font-bold py-3 px-6 rounded-2xl flex items-center shadow-2xl">
-            <span class="bg-white h-11 w-11 flex items-center justify-center rounded-full mr-4 text-cyan-500">
-                <v-icon name="fa-arrow-up" class="h-7 w-7" />
-            </span>
-            Send Money
-        </button>
+    <div class="h-full">
+        <!-- Sidebar -->
+        <div class="fixed top-16 right-0 h-full w-1/3 bg-white z-50 p-16"
+             :class="{ 'translate-x-0': isActive, 'translate-x-full': !isActive }">
+            <!-- Content for send money -->
+            <div v-if="sendMoneyActive">
+                <h2>Send Money Content</h2>
+                <form >
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-700">Recipient Email</label>
+                        <input type="email" id="email"  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div class="mb-4">
+                        <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                        <input type="number" id="amount"  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-200 disabled:opacity-25 transition">Send Money</button>
+                    </div>
+                </form>
+            </div>
 
-        <!-- Withdraw Money button -->
-        <button @click.prevent="toggle('withdrawMoney')" class="mt-5 w-full bg-yellow-500 hover:bg-yellow-600 text-white text-xl font-bold py-3 px-6 rounded-2xl flex items-center shadow-2xl">
-            <span class="bg-white h-11 w-11 flex items-center justify-center rounded-full mr-4 text-yellow-500">
-                <v-icon name="fa-arrow-left" class="h-7 w-7" />
-            </span>
-            Withdraw Money
-        </button>
-
-        <!-- Sidebar content -->
-        <!-- Sidebar for sending money -->
-        <div
-            v-if="sidebars.sendMoney"
-            class="transition-all duration-700 bg-yellow-200 overflow-hidden flex items-center justify-center"
-            :class="[sidebars.sendMoney ? 'max-w-lg' : 'max-w-0']"
-        >
-            <div class="w-48 text-center font-bold text-xl">Send Money Sidebar</div>
-            <slot></slot>
-        </div>
-
-        <!-- Sidebar for withdrawing money -->
-        <div
-            v-if="sidebars.withdrawMoney"
-            class="transition-all duration-700 bg-yellow-200 overflow-hidden flex items-center justify-center"
-            :class="[sidebars.withdrawMoney ? 'max-w-lg' : 'max-w-0']"
-        >
-            <div class="w-48 text-center font-bold text-xl">Withdraw Money Sidebar</div>
-            <slot></slot>
+            <!-- Content for withdraw -->
+            <div v-if="withdrawActive">
+                <h2>Withdraw Content</h2>
+                    <CreditCardForm />
+            </div>
         </div>
 
         <!-- Dimmer -->
         <transition name="fade">
-            <div v-if="(sidebars.sendMoney || sidebars.withdrawMoney)" class="w-screen h-screen bg-neutral-400 opacity-75 fixed inset-0"></div>
+            <div @click="closeSidebar" v-if="(sendMoneyActive || withdrawActive)"
+                 class="fixed top-16 bottom-0 left-0 right-0 bg-neutral-200 opacity-75"></div>
         </transition>
     </div>
 </template>
 
-<script setup>
-import { defineProps } from 'vue';
+<script>
+import CreditCardForm from "@/Components/CreditCardForm.vue";
 
-// Define props to accept toggle method and sidebars object
-const props = defineProps(['toggle', 'sidebars']);
+export default {
+    components: {CreditCardForm},
+    props: {
+        sendMoneyActive: Boolean,
+        withdrawActive: Boolean
+    },
+    computed: {
+        isActive() {
+            return this.sendMoneyActive || this.withdrawActive;
+        }
+    },
+    methods: {
+        closeSidebar() {
+            // Emit an event to notify the parent component to close the sidebar
+            this.$emit('close');
+            this.enableScroll(); // Re-enable scrolling when the sidebar is closed
+        },
+        disableScroll() {
+            // Disable scrolling by setting overflow-y to hidden on the body element
+            document.body.style.overflowY = 'hidden';
+        },
+        enableScroll() {
+            // Re-enable scrolling by removing the overflow-y style from the body element
+            document.body.style.overflowY = '';
+        }
+    },
+    mounted() {
+        // Ensure scrolling is re-enabled if the sidebar is closed while it's active
+        if (this.isActive) {
+            this.disableScroll();
+        }
+    }
+};
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 1s ease-out;
-}
-
-.fade-enter,
-.fade-leave-to {
-    opacity: 0;
-}
-</style>
