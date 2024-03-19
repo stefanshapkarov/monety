@@ -23,7 +23,6 @@
 
             <!-- Content for withdraw -->
             <div v-if="withdrawActive">
-                <h2>Withdraw Content</h2>
                     <CreditCardForm />
             </div>
         </div>
