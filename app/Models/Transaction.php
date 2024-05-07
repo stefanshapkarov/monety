@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereToAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereUpdatedAt($value)
+ * @property string $status
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction whereStatus($value)
  * @mixin \Eloquent
  */
 class Transaction extends Model

@@ -38,10 +38,8 @@ class TransactionController extends Controller
         return redirect('/dashboard')->with(['success' => 'The transaction was successful.']);
     }
 
-    // Will need change to take transaction directly as parameter
-    public function complete(Request $request)
+    public function complete(Transaction $transaction)
     {
-        $transaction = Transaction::findOrFail($request->transactionId);
         try {
             if ($transaction->status != 'pending') {
                 throw new \Exception('Transaction is not pending.');
@@ -50,13 +48,12 @@ class TransactionController extends Controller
         } catch (Throwable $e) {
             return redirect('/dashboard')->with(['error' => 'There was a problem completing the transaction!']);
         }
-        return null;
+
+        return redirect('/dashboard')->with(['success' => 'The transaction has been completed.']);
     }
 
-    // Will need change to take transaction directly as parameter
-    public function refund(Request $request)
+    public function refund(Transaction $transaction)
     {
-        $transaction = Transaction::findOrFail($request->transactionId);
         $user = auth()->user();
         if ($transaction->to_account_id != $user->account->id) {
             return redirect('/dashboard')->with(['error' => 'Unauthorized refund attempt.']);
