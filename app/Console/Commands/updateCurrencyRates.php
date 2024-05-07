@@ -31,7 +31,7 @@ class updateCurrencyRates extends Command
     public function handle()
     {
         $apiKey = config('services.exchangerates.key');
-        $response = Http::get('https://v6.exchangerate-api.com/v6/' . $apiKey . '/latest/USD');
+        $response = Http::get('https://v6.exchangerate-api.com/v6/' . $apiKey . '/latest/MKD');
         if ($response->successful()) {
             $rates = $response['conversion_rates'];
             $rates = collect($rates)->filter(function ($rate, $code) {

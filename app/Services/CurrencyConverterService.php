@@ -7,13 +7,9 @@ use http\Exception\InvalidArgumentException;
 
 class CurrencyConverterService
 {
-    public function convert($amount, $toCurrency)
+    public static function convert($amount, $toCurrency)
     {
-        $rate = CurrencyRate::find($toCurrency);
-        if ($rate) {
-            return $amount * $rate['exchange_rate'];
-        } else {
-            throw new InvalidArgumentException();
-        }
+        $rate = CurrencyRate::findOrFail($toCurrency);
+        return $amount / $rate['exchange_rate'];
     }
 }

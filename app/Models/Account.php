@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Account whereUserId($value)
+ * @property string $currency
+ * @method static \Illuminate\Database\Eloquent\Builder|Account whereCurrency($value)
  * @mixin \Eloquent
  */
 class Account extends Model

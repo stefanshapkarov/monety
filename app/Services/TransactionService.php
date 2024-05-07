@@ -45,7 +45,13 @@ class TransactionService
     {
         DB::transaction(function () use ($transaction) {
             $toAccount = Account::findOrFail($transaction->to_account_id);
+            $fromAccountCurrency = Account::findOrFail($transaction->from_account_id)->currency;
+            $toAccountCurrency = $toAccount->currency;
             $amount = $transaction->amount;
+
+            if ($fromAccountCurrency != $toAccountCurrency) {
+                $amount = CurrencyConverterService::convert($amount, $fromAccountCurrency);
+            }
 
             $toAccount->balance += $amount;
             $toAccount->save();
@@ -57,16 +63,17 @@ class TransactionService
     public function refundFunds(Transaction $transaction, $pending = false)
     {
         DB::transaction(function () use ($transaction, $pending) {
-            $toAccount = Account::findOrFail($transaction->from_account_id);
-            $fromAccount = Account::findOrFail($transaction->to_account_id);
+            $fromAccount = Account::findOrFail($transaction->from_account_id);
+            $toAccount = Account::findOrFail($transaction->to_account_id);
             $amount = $transaction->amount;
 
-            $toAccount->balance += $amount;
+            $fromAccount->balance += $amount;
             if (!$pending) {
-                $fromAccount->balance -= $amount;
-                $fromAccount->save();
+                $amount = CurrencyConverterService::convert($amount, $toAccount->currency);
+                $toAccount->balance -= $amount;
+                $toAccount->save();
             }
-            $toAccount->save();
+            $fromAccount->save();
 
             $transaction->status = 'refunded';
             $transaction->save();
