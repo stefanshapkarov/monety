@@ -40,7 +40,7 @@ Route::middleware([
             'currentAccount' => auth()->user()->account,
             'sentTransactions' => Transaction::where('from_account_id', auth()->user()->account->id)->get(),
             'receivedTransactions' => Transaction::where('to_account_id', auth()->user()->account->id)->get(),
-            'convertedCurrency' => CurrencyConverterService::convert(200, 'MKD')
+            'convertedCurrency' => CurrencyConverterService::convert(200, 'EUR', 'MKD')
         ]);
     })->name('dashboard');
 

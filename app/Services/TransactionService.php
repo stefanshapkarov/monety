@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Account;
+use App\Models\CurrencyRate;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +51,7 @@ class TransactionService
             $amount = $transaction->amount;
 
             if ($fromAccountCurrency != $toAccountCurrency) {
-                $amount = CurrencyConverterService::convert($amount, $fromAccountCurrency);
+                $amount = CurrencyConverterService::convert($amount, $fromAccountCurrency, $toAccountCurrency);
             }
 
             $toAccount->balance += $amount;
@@ -69,8 +70,16 @@ class TransactionService
 
             $fromAccount->balance += $amount;
             if (!$pending) {
-                $amount = CurrencyConverterService::convert($amount, $toAccount->currency);
-                $toAccount->balance -= $amount;
+                $fromAccountCurrency = $fromAccount->currency;
+                $toAccountCurrency = $toAccount->currency;
+                $amount = CurrencyConverterService::convert($amount, $fromAccountCurrency, $toAccountCurrency);
+
+                $toAccountBalance = $toAccount->balance;
+                $toAccountBalance -= $amount;
+                if ($toAccountBalance < 0.0001) {
+                    $toAccountBalance = 0;
+                }
+                $toAccount->balance = $toAccountBalance;
                 $toAccount->save();
             }
             $fromAccount->save();
