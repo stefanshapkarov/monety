@@ -9,11 +9,8 @@ use Throwable;
 
 class TransactionController extends Controller
 {
-    protected $transactionService;
-
-    public function __construct(TransactionService $transactionService)
+    public function __construct(protected TransactionService $transactionService)
     {
-        $this->transactionService = $transactionService;
     }
 
     public function store(Request $request)
@@ -27,7 +24,7 @@ class TransactionController extends Controller
         $toAccountEmail = $request->email;
 
         try {
-            $this->transactionService->performTransaction($amount, $toAccountEmail);
+            $this->transactionService->create($amount, $toAccountEmail);
         } catch (Throwable $e) {
             return redirect('/dashboard')->with(['error' => 'There was a problem with the transaction, please try again later.']);
         }

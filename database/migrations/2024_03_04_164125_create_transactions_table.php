@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('from_account_id');
             $table->unsignedBigInteger('to_account_id');
-            $table->double('amount');
+            $table->double('fromAmount');
+            $table->double('toAmount');
             $table->timestamps();
             $table->enum('status', ['pending', 'completed', 'refunded'])->default('pending');
             $table->foreign('from_account_id')

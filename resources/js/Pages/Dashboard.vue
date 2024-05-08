@@ -50,7 +50,7 @@ import WithdrawMoneyButton from "@/Components/WithdrawMoneyButton.vue";
                                     <div class="border border-gray-600 mb-3">
                                         <p>Transaction senderId: {{ transaction.from_account_id }}</p>
                                         <p>Transaction receiverId: {{ transaction.to_account_id }}</p>
-                                        <p>Amount: {{ transaction.amount }}</p>
+                                        <p>Amount: {{ transaction.fromAmount }}</p>
                                         <p>Status: {{ transaction.status }}</p>
                                     </div>
                                 </li>
@@ -64,7 +64,7 @@ import WithdrawMoneyButton from "@/Components/WithdrawMoneyButton.vue";
                                     <div class="border border-gray-600 mb-3">
                                         <p>Transaction senderId: {{ transaction.from_account_id }}</p>
                                         <p>Transaction receiverId: {{ transaction.to_account_id }}</p>
-                                        <p>Amount: {{ transaction.amount }}</p>
+                                        <p>Amount: {{ transaction.toAmount }}</p>
                                         <p>Status: {{ transaction.status }}</p>
                                         <!-- Testing refund functionality -->
                                         <a :href="'/refund-transaction/' + transaction.id">Refund</a><br>
