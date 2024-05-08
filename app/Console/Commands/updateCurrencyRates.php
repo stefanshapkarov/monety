@@ -31,30 +31,38 @@ class updateCurrencyRates extends Command
     public function handle()
     {
         $apiKey = config('services.exchangerates.key');
-        $response = Http::get('https://v6.exchangerate-api.com/v6/' . $apiKey . '/latest/MKD');
-        if ($response->successful()) {
-            $rates = $response['conversion_rates'];
-            $rates = collect($rates)->filter(function ($rate, $code) {
-               return in_array($code, ['EUR', 'USD', 'MKD']);
-            });
-            DB::transaction(function () use ($rates) {
-                foreach ($rates as $code => $rate) {
-                    $entry = CurrencyRate::find($code);
-                    if ($entry) {
-                        $entry->exchange_rate = $rate;
-                        $entry->save();
-                    } else {
-                        CurrencyRate::create([
-                            'currency_code' => $code,
-                            'exchange_rate' => $rate
-                        ]);
-                    }
-                }
-            });
 
-            $this->info('Currency exchange rates fetch successful.');
-        } else {
-            $this->error('Currency exchange rates fetch unsuccessful.');
+        $currencyCodes = ['EUR', 'USD', 'MKD'];
+
+        foreach ($currencyCodes as $code) {
+
+            $response = Http::get('https://v6.exchangerate-api.com/v6/' . $apiKey . '/latest/' . $code);
+
+            if ($response->successful()) {
+
+                $rates = $response['conversion_rates'];
+
+                $rates = json_encode(collect($rates)->filter(function ($rate, $code) {
+                    return in_array($code, ['EUR', 'USD', 'MKD']);
+                }));
+
+                DB::transaction(function () use ($rates, $code) {
+                    $currencyRate = CurrencyRate::find($code);
+
+                    if (!$currencyRate) {
+                        $currencyRate = new CurrencyRate();
+                        $currencyRate->currency_code = $code;
+                    }
+
+                    $currencyRate->conversion_rates = $rates;
+
+                    $currencyRate->save();
+                });
+
+                $this->info('Currency exchange rates fetch successful.');
+            } else {
+                $this->error('Currency exchange rates fetch unsuccessful.');
+            }
         }
     }
 }

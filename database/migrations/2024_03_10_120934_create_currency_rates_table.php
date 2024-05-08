@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('currency_rates', function (Blueprint $table) {
             $table->string('currency_code')->primary();
-            $table->double('exchange_rate');
+            $table->json('conversion_rates');
             $table->timestamps();
         });
     }
