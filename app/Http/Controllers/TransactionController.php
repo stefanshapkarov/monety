@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class TransactionController extends Controller

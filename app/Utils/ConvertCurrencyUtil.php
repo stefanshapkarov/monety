@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Utils;
 
 use App\Models\CurrencyRate;
-use http\Exception\InvalidArgumentException;
 
-class CurrencyConverterService
+class ConvertCurrencyUtil
 {
     public static function convert($amount, $fromCurrency, $toCurrency)
     {
