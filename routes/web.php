@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Transaction;
 use App\Utils\ConvertCurrencyUtil;
@@ -42,6 +43,9 @@ Route::middleware([
             'convertedCurrency' => ConvertCurrencyUtil::convert(200, 'EUR', 'MKD')
         ]);
     })->name('dashboard');
+
+    Route::patch('/account/updateCurrency', [AccountController::class, 'updateCurrency'])
+        ->name('account.updateCurrency');
 
     Route::post('/transfer-funds', [TransactionController::class, 'store'])->name('transfer-funds');
     Route::get('/refund-transaction/{transaction:id}', [TransactionController::class, 'refund'])

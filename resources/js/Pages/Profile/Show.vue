@@ -4,6 +4,7 @@ import DeleteUserForm from '@/Pages/Profile/Partials/DeleteUserForm.vue';
 import TwoFactorAuthenticationForm from '@/Pages/Profile/Partials/TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from '@/Pages/Profile/Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from '@/Pages/Profile/Partials/UpdateProfileInformationForm.vue';
+import UpdateAccountCurrencyForm from "@/Pages/Profile/Partials/UpdateAccountCurrencyForm.vue";
 
 defineProps({
     confirmsTwoFactorAuthentication: Boolean,
@@ -31,6 +32,16 @@ defineProps({
                     <UpdatePasswordForm  class="sm:mt-10 md:mt-0"/>
                 </div>
                 </div>
+
+                <hr class="h-px bg-gray-200 border-0 dark:bg-gray-700 mb-5">
+
+                <div class="md:grid md:grid-cols-2 mb-10">
+                    <div class="md:mr-8">
+                        <UpdateAccountCurrencyForm :user="$page.props.auth.user" />
+                    </div>
+                </div>
+
+                <hr class="h-px bg-gray-200 border-0 dark:bg-gray-700 mb-5">
 
                 <div class="md:grid md:grid-cols-2">
                 <div v-if="$page.props.jetstream.canManageTwoFactorAuthentication" class="md:mr-8">
