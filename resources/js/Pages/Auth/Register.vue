@@ -13,6 +13,7 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
+    currency: 'MKD',
     terms: false,
 });
 
@@ -122,6 +123,16 @@ const submit = () => {
                                 autocomplete="new-password"
                             />
                             <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                        </div>
+
+                        <div class="mt-4">
+                            <InputLabel for="currency" value="Currency" />
+                            <select id="currency" v-model="form.currency" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-emerald-400 dark:focus:border-indigo-600 focus:ring-emerald-400 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                                <option value="MKD">MKD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="USD">USD</option>
+                            </select>
+                            <InputError class="mt-2" :message="form.errors.currency_selection" />
                         </div>
 
                         <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">

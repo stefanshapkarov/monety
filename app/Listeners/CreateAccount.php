@@ -2,10 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Events\CustomUserRegisteredEvent;
 use App\Models\Account;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CreateAccount
 {
@@ -20,11 +18,12 @@ class CreateAccount
     /**
      * Handle the event.
      */
-    public function handle(Registered $event): void
+    public function handle(CustomUserRegisteredEvent $event): void
     {
         // When a user is registered we initialize its Account object
         $user = $event->user;
         $account = new Account();
+        $account->currency = $event->currency;
         $user->account()->save($account);
     }
 }
