@@ -36,10 +36,10 @@ const updateAccountCurrency = () => {
         <template #form>
             <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="currency" value="Currency" />
-                <select id="currency" v-model="form.currency" class="mt-1 block w-full">
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
+                <select id="currency" v-model="form.currency" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-emerald-400 dark:focus:border-indigo-600 focus:ring-emerald-400 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                     <option value="MKD">MKD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
                 </select>
             </div>
         </template>
