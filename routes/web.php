@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Utils\ConvertCurrencyUtil;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,8 +38,8 @@ Route::middleware([
 
         return Inertia::render('Dashboard', [
             // Passing the account object for testing purposes
-            'currentAccount' => auth()->user()->account,
-            'transactions' => Transaction::where('from_account_id', auth()->user()->account->id)->orWhere('to_account_id', '=', \auth()->user()->account->id)->with('accountFrom', 'accountTo')->orderBy('created_at', 'desc')->paginate(7)->onEachSide(1),
+            'currentAccount' => User::with('account')->find(auth()->id()),
+            'transactions' => \App\Services\TransactionService::getTransactions(),
             'convertedCurrency' => ConvertCurrencyUtil::convert(200, 'EUR', 'MKD')
         ]);
     })->name('dashboard');

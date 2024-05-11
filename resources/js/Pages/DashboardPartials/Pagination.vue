@@ -1,10 +1,10 @@
 <template>
-    <nav class="text-center py-4 bg-cyan-400">
+    <nav class="text-center py-2 bg-cyan-400">
         <template v-for="(link, index) in links" :key="index">
             <inertia-link
                 :href="link.url || ''"
                 :class="[
-          'inline-block py-2 px-5 rounded-lg text-lg mr-1',
+          'inline-block py-1 px-3 rounded-lg text-lg mr-1',
           link.active ? 'bg-white text-gray-400' : '',
           !link.active ? 'text-white' : '',
           !link.url ? 'text-white cursor-not-allowed' : 'hover:bg-white hover:text-gray-400'

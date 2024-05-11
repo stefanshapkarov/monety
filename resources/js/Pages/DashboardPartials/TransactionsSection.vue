@@ -44,7 +44,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <TransactionListItem v-for="transaction in $props.transactions" :key="transaction" :transaction="transaction"/>
+                    <TransactionListItem v-for="transaction in $props.transactions" :key="transaction" :transaction="transaction" :account="$props.currentAccount"/>
                     </tbody>
                 </table>
             </div>
@@ -61,6 +61,7 @@ import Pagination from "@/Pages/DashboardPartials/Pagination.vue";
 <script>
 export default {
     props: {
+        currentAccount: Object,
         transactions: Array,
         links: Array
     }

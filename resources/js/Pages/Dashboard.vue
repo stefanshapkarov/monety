@@ -88,7 +88,7 @@ import TransferFundsForm from "@/Pages/DashboardPartials/TransferFundsForm.vue";
                     <div class="w-full bg-white rounded-3xl shadow-2xl flex justify-between pb-10">
                         <div>
                         <div class="pl-10 pt-5 text-6xl font-semibold mb-2 text-cyan-400">Balance:</div>
-                        <div class="pl-10 ml-20 mt-6 text-8xl font-bold text-gray-400">{{ $props.currentAccount.balance }}<span class="ml-2 text-5xl">{{ $props.currentAccount.currency }}</span></div>
+                            <div class="pl-10 ml-10 mr-10 mt-6 text-8xl font-bold text-gray-400">{{ $props.currentAccount.account.balance.toFixed(2) }}<span class="ml-2 text-5xl">{{ $props.currentAccount.account.currency }}</span></div>
 
                         </div>
                         <div class="mt-10 mr-10 w-6/12">
@@ -105,9 +105,8 @@ import TransferFundsForm from "@/Pages/DashboardPartials/TransferFundsForm.vue";
                         </div>
                     </div>
                 </div>
-                <p>{{$props.transactions.links}}</p>
                 <SideBar v-if="sidebarActive" :sendMoneyActive="sendMoneyActive" :withdrawActive="withdrawActive" @close="closeSidebar" />
-                <TransactionsSection :transactions="$props.transactions.data" :links="$props.transactions.links"/>
+                <TransactionsSection :currentAccount="$props.currentAccount" :transactions="$props.transactions.data" :links="$props.transactions.links"/>
             </div>
         </div>
     </AppLayout>

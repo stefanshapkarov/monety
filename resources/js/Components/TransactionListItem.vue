@@ -1,9 +1,9 @@
 <template>
     <tr class="border-b-2 border-gray-200">
-        <TransactionProfile />
-        <TransactionDate :date="$props.transaction.created_at"/>
-        <TransactionAmount :amount="$props.transaction.fromAmount" :currency="$props.transaction.account_from.currency"/>
-        <TransactionStatus />
+        <TransactionProfile :account="$props.account.id === $props.transaction.from_account_id ? $props.transaction.account_to.user : $props.transaction.account_from.user "/>
+        <TransactionDate :date="$props.transaction.updated_at"/>
+        <TransactionAmount :received="$props.account.id!==$props.transaction.from_account_id" :amount="$props.account.id === $props.transaction.from_account_id ? $props.transaction.fromAmount : $props.transaction.toAmount" :currency="$props.account.id === $props.transaction.from_account_id ? $props.transaction.account_from.currency : $props.transaction.account_to.currency"/>
+        <TransactionStatus :received="$props.account.id!==$props.transaction.from_account_id" :transaction="$props.transaction"/>
     </tr>
 </template>
 
@@ -18,7 +18,8 @@ import TransactionStatus from "@/Components/TransactionStatus.vue";
 <script>
 export default {
     props: {
-        transaction: Object,
+        account: Object,
+        transaction: Object
     }
 }
 </script>

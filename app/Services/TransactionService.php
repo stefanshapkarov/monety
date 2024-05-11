@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Utils\ConvertCurrencyUtil;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class TransactionService
@@ -87,5 +88,50 @@ class TransactionService
             $transaction->status = 'refunded';
             $transaction->save();
         });
+    }
+
+    public static function getTransactions()
+    {
+        $accountId = auth()->user()->account->id;
+
+// Get pending transactions
+        $pendingTransactions = Transaction::where(function ($query) use ($accountId) {
+            $query->where('from_account_id', $accountId)
+                ->orWhere('to_account_id', $accountId);
+        })
+            ->where('status', 'pending')
+            ->with(['accountFrom.user', 'accountTo.user'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+// Get all other transactions
+        $otherTransactions = Transaction::where(function ($query) use ($accountId) {
+            $query->where('from_account_id', $accountId)
+                ->orWhere('to_account_id', $accountId);
+        })
+            ->where('status', '<>', 'pending')
+            ->with(['accountFrom.user', 'accountTo.user'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+// Merge the two lists
+        $transactions = $pendingTransactions->concat($otherTransactions);
+
+// Paginate the merged list
+        $perPage = 7;
+        $currentPage = request()->get('page') ?: 1;
+        $offset = ($currentPage - 1) * $perPage;
+        $paginatedTransactions = new LengthAwarePaginator(
+            $transactions->slice($offset, $perPage),
+            $transactions->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url()]
+        );
+
+        $paginatedTransactions->onEachSide(1);
+
+        return $paginatedTransactions;
+
     }
 }
