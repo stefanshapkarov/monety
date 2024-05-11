@@ -38,11 +38,12 @@ Route::middleware([
         return Inertia::render('Dashboard', [
             // Passing the account object for testing purposes
             'currentAccount' => auth()->user()->account,
-            'sentTransactions' => Transaction::where('from_account_id', auth()->user()->account->id)->get(),
-            'receivedTransactions' => Transaction::where('to_account_id', auth()->user()->account->id)->get(),
+            'transactions' => Transaction::where('from_account_id', auth()->user()->account->id)->orWhere('to_account_id', '=', \auth()->user()->account->id)->with('accountFrom', 'accountTo')->orderBy('created_at', 'desc')->paginate(7)->onEachSide(1),
             'convertedCurrency' => ConvertCurrencyUtil::convert(200, 'EUR', 'MKD')
         ]);
     })->name('dashboard');
+
+    Route::get('/search/accounts', [AccountController::class, 'search']);
 
     Route::patch('/account/updateCurrency', [AccountController::class, 'updateCurrency'])
         ->name('account.updateCurrency');

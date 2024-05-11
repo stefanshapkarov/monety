@@ -1,20 +1,24 @@
-<script setup>
-
-import TransactionStatus from "@/Components/TransactionStatus.vue";
-import TransactionDate from "@/Components/TransactionDate.vue";
-import TransactionAmount from "@/Components/TransactionAmount.vue";
-import TransactionProfile from "@/Components/TransactionProfile.vue";
-</script>
-
 <template>
-    <tr class="w-full">
+    <tr class="border-b-2 border-gray-200">
         <TransactionProfile />
-        <TransactionDate />
-        <TransactionAmount />
+        <TransactionDate :date="$props.transaction.created_at"/>
+        <TransactionAmount :amount="$props.transaction.fromAmount" :currency="$props.transaction.account_from.currency"/>
         <TransactionStatus />
     </tr>
 </template>
 
-<style scoped>
+<script setup>
+import TransactionProfile from "@/Components/TransactionProfile.vue";
+import TransactionDate from "@/Components/TransactionDate.vue";
+import TransactionAmount from "@/Components/TransactionAmount.vue";
+import TransactionStatus from "@/Components/TransactionStatus.vue";
 
-</style>
+</script>
+
+<script>
+export default {
+    props: {
+        transaction: Object,
+    }
+}
+</script>

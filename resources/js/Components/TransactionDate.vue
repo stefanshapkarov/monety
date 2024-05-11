@@ -3,11 +3,21 @@
 </script>
 
 <template>
-    <td class="bg-white font-semibold text-gray-500 p-5">
-        <p class="whitespace-no-wrap">Sep 28, 2022, 80:22 AM</p>
+    <td class="bg-white font-bold text-lg text-gray-400 px-4 pl-8">
+        <p class="whitespace-no-wrap">{{ new Date($props.date).toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        }) }}</p>
     </td>
 </template>
 
-<style scoped>
-
-</style>
+<script>
+export default {
+    props: {
+        date: Date,
+    }
+}
+</script>
