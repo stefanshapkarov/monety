@@ -72,10 +72,14 @@ class TransactionService
             $toAccount = Account::findOrFail($transaction->to_account_id);
             $fromAmount = $transaction->fromAmount;
             $toAmount = $transaction->toAmount;
+            $toAccountBalance = $toAccount->balance;
+
+            if ($toAccountBalance < $toAmount) {
+                throw new \Exception("refundFunds - Refund failed, not enough balance.");
+            }
 
             $fromAccount->balance += $fromAmount;
             if (!$pending) {
-                $toAccountBalance = $toAccount->balance;
                 $toAccountBalance -= $toAmount;
                 if ($toAccountBalance < 0.0001) {
                     $toAccountBalance = 0;

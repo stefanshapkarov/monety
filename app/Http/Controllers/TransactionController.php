@@ -54,7 +54,11 @@ class TransactionController extends Controller
         }
         if ($transaction->status != 'completed') {
             if ($transaction->status == 'pending') {
-                $this->transactionService->refundFunds($transaction, true);
+                try {
+                    $this->transactionService->refundFunds($transaction, true);
+                } catch (\Exception $e) {
+                    return redirect('/dashboard')->with(['error' => 'Not enough balance to process refund.']);
+                }
             } else {
                 return redirect('/dashboard')->with(['error' => 'This transaction is not eligible for a refund.']);
             }
