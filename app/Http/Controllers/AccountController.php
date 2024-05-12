@@ -7,9 +7,28 @@ use App\Models\Account;
 use App\Models\User;
 use App\Utils\ConvertCurrencyUtil;
 use Illuminate\Http\Request;
+use Throwable;
 
 class AccountController
 {
+    public function withdraw(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $amount = $request->amount;
+
+        try {
+            $account = Account::where('user_id', auth()->user()->id)->firstOrFail();
+            $account->balance += $amount;
+            $account->save();
+        } catch (Throwable $e) {
+            return redirect()->route('dashboard')->with(['error' => 'There was a problem with the withdrawal, please try again later.']);
+        }
+
+        return redirect()->route('dashboard')->with(['success' => 'The withdrawal was successful.']);
+    }
     public function updateCurrency(Request $request)
     {
         $request->validate([

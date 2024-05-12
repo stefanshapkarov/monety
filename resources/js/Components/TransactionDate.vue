@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <td class="bg-white font-bold text-lg text-gray-400 px-4 pl-8">
+    <td class="bg-white font-normal text-lg text-gray-400 px-4 pl-8">
         <p class="whitespace-no-wrap">{{ new Date($props.date).toLocaleDateString('en-GB', {
             year: 'numeric',
             month: 'short',

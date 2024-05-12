@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col items-center justify-between align-middle">
+    <div class="flex items-center justify-between align-middle bg-purple-50 shadow-xl rounded-md pl-5 mb-5">
         <div class="w-full h-56 mb-8" style="perspective: 1000px">
             <div class="credit-card relative cursor-pointer transition-transform duration-500" style="transform-style: preserve-3d" @click="flipCard">
                 <div class="w-full m-auto rounded-xl shadow-2xl absolute" style="backface-visibility: hidden">
@@ -32,48 +32,73 @@
                 </div>
             </div>
         </div>
-        <form class="bg-white w-full max-w-md mx-auto px-6 py-8 shadow-md rounded-md">
+        <form @submit.prevent="submit" class=" w-full max-w-md mx-auto px-6 py-8 ">
             <div class="mb-4">
-                <label for="cardNumber" class="block text-neutral-800 font-bold text-sm mb-2">Card number:</label>
-                <input type="text" id="cardNumber" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" v-model="cardData.cardNumber" />
+                <label for="cardNumber" class="block text-purple-600 font-bold text-base mb-2">Card number:</label>
+                <input @focus="flipCard('front')" @input="flipCard('front')" @click="flipCard('front')" type="text" id="cardNumber" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" v-model="cardData.cardNumber" />
             </div>
             <div class="flex justify-between mb-4">
                 <div class="w-1/2 mr-2">
-                    <label for="expDate" class="block text-neutral-800 font-bold text-sm mb-2">Exp. date:</label>
-                    <input type="text" id="expDate" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" maxlength="5" placeholder="MM/YY" v-model="cardData.expDate" />
+                    <label for="expDate" class="block text-purple-600 font-bold text-base mb-2">Exp. date:</label>
+                    <input @focus="flipCard('front')" @input="flipCard('front')" @click="flipCard('front')" type="text" id="expDate" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" maxlength="5" placeholder="MM/YY" v-model="cardData.expDate" />
                 </div>
                 <div class="w-1/2 ml-2">
-                    <label for="ccvNumber" class="block text-neutral-800 font-bold text-sm mb-2">CCV:</label>
-                    <input type="text" id="ccvNumber" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" maxlength="3" placeholder="123" v-model="cardData.ccvNumber" />
+                    <label for="ccvNumber" class="block text-purple-600 font-bold text-base mb-2">CCV:</label>
+                    <input @focus="flipCard('rear')" @input="flipCard('rear')" @click="flipCard('rear')" type="text" id="ccvNumber" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" maxlength="3" placeholder="123" v-model="cardData.ccvNumber" />
                 </div>
             </div>
             <div class="mb-4">
-                <label for="cardName" class="block text-neutral-800 font-bold text-sm mb-2">Card holder:</label>
-                <input type="text" id="cardName" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" placeholder="John Doe" v-model="cardData.cardName" />
+                <label for="cardName" class="block text-purple-600 font-bold text-base mb-2">Card holder:</label>
+                <input @focus="flipCard('front')" @input="flipCard('front')" @click="flipCard('front')" type="text" id="cardName" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" placeholder="John Doe" v-model="cardData.cardName" />
             </div>
+            <div class="mb-4">
+                <label for="amount" class="block text-purple-600 font-bold text-base mb-2">Amount:</label>
+                <input type="number" step="any" id="amount" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" :placeholder="'100 ' + props.currency" v-model="form.amount" />
+            </div>
+            <button type="submit" class="float-right bg-purple-600 py-2 px-4 text-purple-100 font-semibold hover:bg-purple-300 hover:text-purple-600 hover:ring hover:ring-purple-600 rounded-md">Withdraw</button>
         </form>
     </div>
 </template>
+
+<script setup>
+import {useForm} from '@inertiajs/vue3';
+import {defineProps} from "vue";
+
+const props = defineProps(['closeModal', 'currency']);
+
+const form = useForm({
+    amount: ''
+});
+
+const submit = async (e) => {
+    e.preventDefault();
+    form.post('/withdraw', {
+        onSuccess: () => {
+            props.closeModal();
+        },
+    });
+};
+</script>
 
 <script>
 export default {
     data() {
         return {
             cardData: {
-                cardNumber: '4256 4256 4256 4256',
-                cardName: 'John Doe',
-                expDate: '12/24',
-                ccvNumber: '342'
+                cardNumber: '',
+                cardName: '',
+                expDate: '',
+                ccvNumber: ''
             }
         };
     },
     methods: {
-        flipCard() {
+        flipCard(side) {
             const cardEl = document.querySelector('.credit-card');
-            if (cardEl.classList.contains('rearIsVisible')) {
-                cardEl.classList.remove('rearIsVisible');
-            } else {
+            if (side === 'rear') {
                 cardEl.classList.add('rearIsVisible');
+            } else if (side === 'front') {
+                cardEl.classList.remove('rearIsVisible');
             }
         }
     }

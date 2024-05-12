@@ -1,12 +1,12 @@
 <template>
-    <div class="w-full mt-5 shadow-2xl">
+    <div class="w-full mt-14 shadow-xl">
         <div class="overflow-y-hidden rounded-xl border">
             <div class="overflow-auto">
-                <table class="w-full text-sm text-left rtl:text-right">
+                <table class="w-full text-sm text-left rtl:text-right overflow-hidden">
                     <thead class="text-md text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-gray-200">
                     <!-- Payment History Title -->
                     <tr class="bg-emerald-400 text-left text-xl font-bold uppercase tracking-wider text-white">
-                        <th colspan="4" class="px-5 py-5">Transactions History</th>
+                        <th colspan="4" class="px-6 py-3">Transactions History</th>
                     </tr>
                     <!-- Search and Filter Options -->
                     <tr class="text-center">
@@ -17,7 +17,7 @@
                         <!-- Date Filter -->
                         <th class="py-3 px-3 border-r-2 border-gray-200">
                             <div class="w-full flex items-center justify-around">
-                            <p class="text-xl text-gray-400 py-1">Created Date</p>
+                            <p class="text-lg text-gray-400 py-1">Created Date</p>
                             <div class="flex flex-col text-gray-400  cursor-pointer">
                                 <v-icon name="md-keyboardarrowup-round" class="w-5 h-5" />
                                 <v-icon name="md-keyboardarrowdown-round" class="w-5 h-5" />
@@ -46,10 +46,10 @@
                     <tbody>
                     <TransactionListItem v-for="transaction in $props.transactions" :key="transaction" :transaction="transaction" :account="$props.currentAccount"/>
                     </tbody>
+                    <Pagination :links="$props.links"/>
                 </table>
             </div>
         </div>
-        <Pagination :links="$props.links"/>
     </div>
 </template>
 <script setup>;

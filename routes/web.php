@@ -55,7 +55,5 @@ Route::middleware([
     Route::get('/complete-transaction/{transaction:id}', [TransactionController::class, 'complete'])
         ->name('complete-transaction');
 
-    Route::get('/withdraw', fn() => Inertia::render('Withdraw', [
-//        'currentAccount' => auth()->user()->account,
-    ]));
+    Route::post('/withdraw', [AccountController::class, 'withdraw'])->name('withdraw');
 });

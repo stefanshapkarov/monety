@@ -1,52 +1,59 @@
 <template>
     <form @submit.prevent="submit">
-        <div class="mb-4">
+        <div class="mb-4 relative">
             <div class="relative">
                 <!-- Search input -->
-                <label for="searchQuery" class="">Account</label>
+                <label for="searchQuery" class="block  font-semibold text-gray-500">Account</label>
                 <input
                     id="searchQuery"
                     type="text"
-                    :value="searchQuery"
+                    v-model="searchQuery"
                     @input="onSearchInput"
                     placeholder="Search account"
+                    autocomplete="off"
                     class="w-full px-4 py-2 text-sm text-gray-800 placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:text-gray-300 dark:placeholder-gray-600 dark:border-gray-700 focus:outline-none focus:ring-emerald-400 focus:border-emerald-400 dark:focus:ring-indigo-600 dark:focus:border-indigo-600"
                 />
 
                 <!-- Hidden input to bind form.email to searchQuery -->
-                <input name="email" type="hidden"/>
+                <input name="email" type="hidden" v-model="form.email"/>
 
                 <!-- Search results list -->
                 <ul
                     v-if="filteredAccounts.length && !selectedAccount"
-                    class="mt-1 bg-white border border-gray-300 rounded-md shadow-lg dark:bg-gray-800 divide-y divide-gray-200  w-full"
+                    class="mt-1 bg-white border border-gray-300 rounded-md shadow-lg dark:bg-gray-800 divide-y divide-gray-200  w-full z-10 absolute"
                 >
                     <li
                         v-for="account in filteredAccounts"
                         :key="account.id"
                         @click="selectAccount(account)"
-                        class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                        class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 flex justify-items-center items-center"
                     >
-                        {{ account.name }} - {{ account.email }}
+                        <div class="h-8 flex-shrink-0">
+                            <img class="h-full w-full rounded-full" :src="account.profile_photo_url" alt="Alt text"/>
+                        </div>
+                        <span class="ml-5">{{ account.name }} - {{ account.email }}</span>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="mb-4">
-            <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-            <input v-model="form.amount" name="amount" type="number" id="amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            <label for="amount" class="block font-semibold text-gray-500">Amount</label>
+            <input v-model="form.amount" name="amount" type="number" id="amount" step="any"
+                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:text-gray-300 dark:placeholder-gray-600 dark:border-gray-700 focus:outline-none focus:ring-emerald-400 focus:border-emerald-400 dark:focus:ring-indigo-600 dark:focus:border-indigo-600 "/>
         </div>
         <div class="flex justify-end">
-            <button type="submit" class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-200 disabled:opacity-25 transition">Send Money</button>
+            <PrimaryButton>Send</PrimaryButton>
         </div>
     </form>
 </template>
 
 <script setup>
-import { useForm } from '@inertiajs/vue3';
-import { ref } from "vue";
+import {useForm} from '@inertiajs/vue3';
+import {ref} from "vue";
 import axios from "axios";
-import { defineProps } from 'vue';
+import {defineProps} from 'vue';
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const props = defineProps(['closeModal']);
 
