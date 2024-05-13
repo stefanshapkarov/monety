@@ -38,30 +38,43 @@
         </div>
         <div class="mb-4">
             <label for="amount" class="block font-semibold text-gray-500">Amount</label>
-            <input v-model="form.amount" name="amount" type="number" id="amount" step="any"
+            <input v-model="form.amount" name="amount" type="number" id="amount" step="any" :placeholder="'Minimum: ' + minimumAmount + ' ' + props.currency"
                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm dark:bg-gray-900 dark:text-gray-300 dark:placeholder-gray-600 dark:border-gray-700 focus:outline-none focus:ring-emerald-400 focus:border-emerald-400 dark:focus:ring-indigo-600 dark:focus:border-indigo-600 "/>
+            <p v-if="form.amount < minimumAmounts[$props.currency] && form.amount !== ''" class="text-red-500 text-sm mt-1">Amount must be at least {{ minimumAmount }} {{ props.currency }}</p>
         </div>
         <div class="flex justify-end">
-            <PrimaryButton>Send</PrimaryButton>
+            <button :disabled="form.amount < minimumAmounts[$props.currency]" type="submit"
+                    class="float-right bg-emerald-400 py-2 px-4 text-white font-semibold hover:bg-white hover:text-emerald-400 hover:ring hover:ring-emerald-400 rounded-md capitalize">
+                Send
+            </button>
         </div>
     </form>
 </template>
 
 <script setup>
 import {useForm} from '@inertiajs/vue3';
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import axios from "axios";
 import {defineProps} from 'vue';
-import SecondaryButton from "@/Components/SecondaryButton.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 
-const props = defineProps(['closeModal']);
+const props = defineProps(['closeModal', 'currency']);
 
 const form = useForm({
     amount: '',
     email: '',
 });
 
+const minimumAmounts = {
+    USD: 5,
+    EUR: 5,
+    MKD: 300,
+};
+
+const minimumAmount = ref(minimumAmounts[props.currency] || 0);
+
+watch(() => props.currency, (newValue) => {
+    minimumAmount.value = minimumAmounts[newValue] || 0;
+});
 const submit = async (e) => {
     e.preventDefault(); // Prevent the default form submission
     form.post('/transfer-funds', {

@@ -16,13 +16,16 @@ import {
     BiArrowUpRightSquareFill,
     FaArrowUp,
     FaArrowLeft,
+    FaArrowRight,
     HiCheck,
     BiXLg,
     MdKeyboardarrowdownRound,
-    MdKeyboardarrowupRound
+    MdKeyboardarrowupRound,
+    MdCancelOutlined,
+    MdCheckcircleoutlineRound
 } from "oh-vue-icons/icons";
 
-addIcons(BiArrowDownCircle, BiArrowUpCircle, LaMinusCircleSolid, BiArrowDownLeftSquareFill, BiArrowUpRightSquareFill, FaArrowUp, FaArrowLeft, HiCheck, BiXLg, MdKeyboardarrowdownRound, MdKeyboardarrowupRound);
+addIcons(BiArrowDownCircle, BiArrowUpCircle, LaMinusCircleSolid, BiArrowDownLeftSquareFill, BiArrowUpRightSquareFill, FaArrowUp, FaArrowLeft, FaArrowRight, HiCheck, BiXLg, MdKeyboardarrowdownRound, MdKeyboardarrowupRound, MdCancelOutlined, MdCheckcircleoutlineRound  );
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 

@@ -7,6 +7,8 @@ use App\Models\Account;
 use App\Models\User;
 use App\Utils\ConvertCurrencyUtil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
 use Throwable;
 
 class AccountController
@@ -21,13 +23,32 @@ class AccountController
 
         try {
             $account = Account::where('user_id', auth()->user()->id)->firstOrFail();
+            $account->balance -= $amount;
+            $account->save();
+        } catch (Throwable $e) {
+            return Redirect::route('dashboard')->with('error', 'There was a problem with the withdrawal, please try again later.');
+        }
+
+        return Redirect::route('dashboard')->with('success', 'The withdrawal was successful.');
+    }
+
+    public function deposit(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $amount = $request->amount;
+
+        try {
+            $account = Account::where('user_id', auth()->user()->id)->firstOrFail();
             $account->balance += $amount;
             $account->save();
         } catch (Throwable $e) {
-            return redirect()->route('dashboard')->with(['error' => 'There was a problem with the withdrawal, please try again later.']);
+            return redirect()->route('dashboard')->with(['error' => 'There was a problem with the deposit, please try again later.']);
         }
 
-        return redirect()->route('dashboard')->with(['success' => 'The withdrawal was successful.']);
+        return redirect()->route('dashboard')->with(['success' => 'The deposit was successful.']);
     }
     public function updateCurrency(Request $request)
     {

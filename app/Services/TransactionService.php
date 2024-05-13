@@ -94,48 +94,120 @@ class TransactionService
         });
     }
 
-    public static function getTransactions()
+    public static function getTransactions($filters = null)
     {
         $accountId = auth()->user()->account->id;
 
-// Get pending transactions
-        $pendingTransactions = Transaction::where(function ($query) use ($accountId) {
-            $query->where('from_account_id', $accountId)
-                ->orWhere('to_account_id', $accountId);
-        })
-            ->where('status', 'pending')
-            ->with(['accountFrom.user', 'accountTo.user'])
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        if($filters) {
+            $pendingTransactions = Transaction::with(['accountFrom.user', 'accountTo.user'])->where(function ($query) use ($accountId, $filters) {
+                if (!empty($filters['email'])) {
+                    $query->where(function ($query) use ($filters) {
+                        $query->whereHas('accountFrom.user', function ($query) use ($filters) {
+                            $query->where('email', 'like', "%{$filters['email']}%");
+                        })->orWhereHas('accountTo.user', function ($query) use ($filters) {
+                            $query->where('email', 'like', "%{$filters['email']}%");
+                        });
+                    });
+                }
 
-// Get all other transactions
-        $otherTransactions = Transaction::where(function ($query) use ($accountId) {
-            $query->where('from_account_id', $accountId)
-                ->orWhere('to_account_id', $accountId);
-        })
-            ->where('status', '<>', 'pending')
-            ->with(['accountFrom.user', 'accountTo.user'])
-            ->orderBy('updated_at', 'desc')
-            ->get();
+                if (!is_null($filters['received'])) {
+                    if ($filters['received']) {
+                        $query->where('to_account_id', $accountId);
+                    } else {
+                        $query->where('from_account_id', $accountId);
+                    }
+                } else {
+                    $query->where(function ($query) use ($accountId) {
+                        $query->where('from_account_id', $accountId)
+                            ->orWhere('to_account_id', $accountId);
+                    });
+                }
+            })
+                ->where('status', 'pending')
+                ->orderBy('updated_at', $filters['sortOrder'] ?? 'desc')
+                ->get();
 
-// Merge the two lists
-        $transactions = $pendingTransactions->concat($otherTransactions);
+            $otherTransactions = Transaction::with(['accountFrom.user', 'accountTo.user'])->where(function ($query) use ($accountId, $filters) {
+                if (!empty($filters['email'])) {
+                    $query->where(function ($query) use ($filters) {
+                        $query->whereHas('accountFrom.user', function ($query) use ($filters) {
+                            $query->where('email', 'like', "%{$filters['email']}%");
+                        })->orWhereHas('accountTo.user', function ($query) use ($filters) {
+                            $query->where('email', 'like', "%{$filters['email']}%");
+                        });
+                    });
+                }
 
-// Paginate the merged list
-        $perPage = 7;
-        $currentPage = request()->get('page') ?: 1;
-        $offset = ($currentPage - 1) * $perPage;
-        $paginatedTransactions = new LengthAwarePaginator(
-            $transactions->slice($offset, $perPage),
-            $transactions->count(),
-            $perPage,
-            $currentPage,
-            ['path' => request()->url()]
-        );
+                if (!is_null($filters['received'])) {
+                    if ($filters['received']) {
+                        $query->where('to_account_id', $accountId);
+                    } else {
+                        $query->where('from_account_id', $accountId);
+                    }
+                } else {
+                    $query->where(function ($query) use ($accountId) {
+                        $query->where('from_account_id', $accountId)
+                            ->orWhere('to_account_id', $accountId);
+                    });
+                }
+            })
+                ->where('status', $filters['status'] ?? '<>', 'pending')
+                ->orderBy('updated_at', $filters['sortOrder'] ?? 'desc')
+                ->get();
 
-        $paginatedTransactions->onEachSide(1);
+            $transactions = $pendingTransactions->concat($otherTransactions);
 
-        return $paginatedTransactions;
+            $perPage = 7;
+            $currentPage = request()->get('page') ?: 1;
+            $offset = ($currentPage - 1) * $perPage;
+            $paginatedTransactions = new LengthAwarePaginator(
+                $transactions->slice($offset, $perPage),
+                $transactions->count(),
+                $perPage,
+                $currentPage,
+                ['path' => request()->url()]
+            );
+
+            $paginatedTransactions->onEachSide(1);
+
+            return $paginatedTransactions;
+        } else {
+            // Get pending transactions
+            $pendingTransactions = Transaction::where(function ($query) use ($accountId) {
+                $query->where('from_account_id', $accountId)
+                    ->orWhere('to_account_id', $accountId);
+            })
+                ->where('status', 'pending')
+                ->with(['accountFrom.user', 'accountTo.user'])
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            $otherTransactions = Transaction::where(function ($query) use ($accountId) {
+                $query->where('from_account_id', $accountId)
+                    ->orWhere('to_account_id', $accountId);
+            })
+                ->where('status', '<>', 'pending')
+                ->with(['accountFrom.user', 'accountTo.user'])
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            $transactions = $pendingTransactions->concat($otherTransactions);
+
+            $perPage = 7;
+            $currentPage = request()->get('page') ?: 1;
+            $offset = ($currentPage - 1) * $perPage;
+            $paginatedTransactions = new LengthAwarePaginator(
+                $transactions->slice($offset, $perPage),
+                $transactions->count(),
+                $perPage,
+                $currentPage,
+                ['path' => request()->url()]
+            );
+
+            $paginatedTransactions->onEachSide(1);
+
+            return $paginatedTransactions;
+        }
 
     }
 }

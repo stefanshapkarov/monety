@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Transaction;
 use App\Models\User;
@@ -21,7 +22,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Dashboard', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -29,20 +30,20 @@ Route::get('/', function () {
     ]);
 });
 
+Route::post('logout', function (){
+    \Illuminate\Support\Facades\Auth::logout();
+})->name('logout');
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/filters', [DashboardController::class, 'applyFilters'])->name('dashboard.filters');
+    Route::get('/dashboard/filters', [DashboardController::class, 'applyFilters'])->name('dashboard.filters.get');
 
-        return Inertia::render('Dashboard', [
-            // Passing the account object for testing purposes
-            'currentAccount' => User::with('account')->find(auth()->id()),
-            'transactions' => \App\Services\TransactionService::getTransactions(),
-            'convertedCurrency' => ConvertCurrencyUtil::convert(200, 'EUR', 'MKD')
-        ]);
-    })->name('dashboard');
 
     Route::get('/search/accounts', [AccountController::class, 'search']);
 
@@ -56,4 +57,5 @@ Route::middleware([
         ->name('complete-transaction');
 
     Route::post('/withdraw', [AccountController::class, 'withdraw'])->name('withdraw');
+    Route::post('/deposit', [AccountController::class, 'deposit'])->name('deposit');
 });

@@ -53,26 +53,40 @@
             </div>
             <div class="mb-4">
                 <label for="amount" class="block text-purple-600 font-bold text-base mb-2">Amount:</label>
-                <input type="number" step="any" id="amount" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" :placeholder="'100 ' + props.currency" v-model="form.amount" />
+                <input type="number" step="any" id="amount" class="block w-full h-10 px-4 py-2 rounded-md border border-slate-300 focus:outline-none focus:border-purple-600 focus:ring focus:ring-purple-200" :placeholder="'Minimum: ' + minimumAmount + ' ' + props.currency" v-model="form.amount" />
+                <p v-if="form.amount < minimumAmounts[$props.currency] && form.amount !== ''" class="text-red-500 text-sm mt-1">Amount must be at least {{ minimumAmount }} {{ props.currency }}</p>
             </div>
-            <button type="submit" class="float-right bg-purple-600 py-2 px-4 text-purple-100 font-semibold hover:bg-purple-300 hover:text-purple-600 hover:ring hover:ring-purple-600 rounded-md">Withdraw</button>
+            <button :disabled="form.amount < minimumAmounts[$props.currency]" type="submit" class="float-right bg-purple-600 py-2 px-4 text-purple-50 font-semibold hover:bg-purple-300 hover:text-purple-600 hover:ring hover:ring-purple-600 rounded-md capitalize">
+                {{ $props.path }}
+            </button>
         </form>
     </div>
 </template>
 
 <script setup>
 import {useForm} from '@inertiajs/vue3';
-import {defineProps} from "vue";
+import {defineProps, ref, watch} from "vue";
 
-const props = defineProps(['closeModal', 'currency']);
+const props = defineProps(['closeModal', 'currency', 'path']);
 
 const form = useForm({
     amount: ''
 });
 
+const minimumAmounts = {
+    USD: 5,
+    EUR: 5,
+    MKD: 300,
+};
+
+const minimumAmount = ref(minimumAmounts[props.currency] || 0);
+
+watch(() => props.currency, (newValue) => {
+    minimumAmount.value = minimumAmounts[newValue] || 0;
+});
 const submit = async (e) => {
     e.preventDefault();
-    form.post('/withdraw', {
+    form.post('/' + props.path, {
         onSuccess: () => {
             props.closeModal();
         },
